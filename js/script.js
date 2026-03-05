@@ -218,8 +218,92 @@ function puntoEnPoligono(lat, lon, coords) {
     return inside;
 }
 
+function obtenerUbicacionGPS() {
+    if (!navigator.geolocation) {
+        alert("El teu navegador no suporta geolocalització.");
+        return;
+    }
+
+    // Mostramos un mensaje visual opcional
+    const input = document.getElementById("buscador-input");
+    input.placeholder = "Obtenint ubicació...";
+
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+
+        try {
+            // 1. Usamos geocodificación inversa para saber el nombre del pueblo (opcional pero queda mejor)
+            const resNom = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+            const dataNom = await resNom.json();
+            const nombrePueblo = dataNom.address.city || dataNom.address.town || dataNom.address.village || "La meua ubicació";
+
+            // 2. Llamamos a Open-Meteo directamente con las coordenadas
+            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code,precipitation_probability,precipitation&daily=weather_code,temperature_2m_max,temperature_2m_min,uv_index_max,sunrise,sunset,precipitation_sum&timezone=auto`);
+            datosGlobales = await res.json();
+
+            // 3. Buscamos avisos y renderizamos
+            const aviso = await obtenerAvisoDesdeGeoJSON(lat, lon);
+            renderizar(datosGlobales, nombrePueblo, "resultado-tiempo-home", aviso);
+            
+            // Guardamos esta como la última "búsqueda"
+            localStorage.setItem("ultimPobleBuscat", nombrePueblo);
+            input.placeholder = "Cerca el teu poble...";
+            input.value = "";
+
+        } catch (e) {
+            console.error(e);
+            alert("Error al carregar les dades de la teua ubicación.");
+        }
+    }, (error) => {
+        alert("No s'ha pogut accedir a la ubicació. Revisa els permisos del navegador.");
+        input.placeholder = "Cerca el teu poble...";
+    });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     initTheme();
     const guardado = localStorage.getItem("ultimPobleBuscat") || "Valencia";
     buscarTiempo(guardado, "resultado-tiempo-home");
+    const navLinks = document.querySelectorAll('nav a');
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            // 1. Quitamos la clase active de todos los enlaces
+            navLinks.forEach(l => l.classList.remove('active'));
+            
+            // 2. Se la añadimos al que hemos pulsado
+            this.classList.add('active');
+        });
+    });
+
+    const btnGPS = document.getElementById("btn-gps");
+    if (btnGPS) {
+        btnGPS.onclick = () => obtenerUbicacionGPS();
+    }
+
+    const modalPriv = document.getElementById("modal-privacitat");
+    const btnPriv = document.getElementById("btn-acceptar-privacitat");
+
+    // 1. Comprovar si ja s'ha acceptat la privadesa
+    const privadesaAcceptada = localStorage.getItem("privadesa_v1");
+
+    if (!privadesaAcceptada) {
+        modalPriv.style.display = "flex"; // Mostrar si és la primera vegada
+    }
+
+    // 2. Tancar i guardar preferència
+    if (btnPriv) {
+        btnPriv.onclick = () => {
+            localStorage.setItem("privadesa_v1", "true");
+            modalPriv.style.display = "none";
+            
+            // OPCIONAL: Llançar el GPS automàticament després d'acceptar
+            // obtenerUbicacionGPS(); 
+        };
+    }
+
+    // Marcamos "Inicio" como activo por defecto al cargar
+    // Suponiendo que el primer enlace es Inicio
+    if(navLinks[0]) navLinks[0].classList.add('active');
 });

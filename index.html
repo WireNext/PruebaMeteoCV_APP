@@ -14,8 +14,9 @@
       <h1>Meteo CV</h1>
       <div id="search-wrapper">
         <div class="search-bar">
-          <input type="text" id="buscador-input" placeholder="Cerca el teu poble..." list="municipios">
-          <button id="btn-buscar" aria-label="Cercar">🔍</button>
+            <input type="text" id="buscador-input" placeholder="Cerca el teu poble..." autocomplete="off">
+            <button id="btn-buscar">🔍</button>
+            <button id="btn-gps" title="Ubicació actual">📍</button>
         </div>
         <datalist id="municipios"></datalist>
       </div>
@@ -31,7 +32,7 @@
   </main>
 
 <nav>
-  <a href="index.html">
+  <a href="index.html" class="active">
     <span class="nav-icon">🏠</span>
     <span class="nav-label">Inici</span>
   </a>
@@ -74,5 +75,22 @@
 </div>
 
   <script src="js/script.js"></script>
+
+<div id="modal-privacitat" class="modal-full">
+    <div class="modal-privacitat-content">
+        <div class="privacitat-icon">🛡️</div>
+        <h2>Benvingut a la teua App del Temps</h2>
+        <p>Per a oferir-te la millor experiència, volem informar-te sobre la teua privadesa:</p>
+        
+        <ul class="privacitat-lista">
+            <li>📍 <strong>Ubicació:</strong> Només s'usa per a consultar el temps actual i no s'envia a cap servidor extern.</li>
+            <li>💾 <strong>Dades Locals:</strong> El teu historial es guarda exclusivament al teu navegador (Local Storage).</li>
+            <li>🚫 <strong>Sense Rastreig:</strong> No usem galetes (cookies) de publicitat ni compartim dades amb tercers.</li>
+        </ul>
+
+        <button id="btn-acceptar-privacitat" class="btn-primari">Ho entenc i vull continuar</button>
+        <p class="nota-peu">En tancar este missatge, acceptes l'ús local de les teues dades.</p>
+    </div>
+</div>
 </body>
 </html>
