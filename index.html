@@ -10,34 +10,24 @@
 <body>
 
   <main class="container">
-    <header>
+    <header class="main-header">
       <h1>Meteo CV</h1>
       <div id="search-wrapper">
-        <input type="text" id="buscador-input" placeholder="Cerca el teu poble..." list="municipios">
+        <div class="search-bar">
+          <input type="text" id="buscador-input" placeholder="Cerca el teu poble..." list="municipios">
+          <button id="btn-buscar" aria-label="Cercar">🔍</button>
+        </div>
         <datalist id="municipios"></datalist>
       </div>
     </header>
 
     <section id="resultado-tiempo-home"></section>
 
-    <div class="column map-column">
-      <h2>⚠️ Avisos AEMET</h2>
-      <iframe src="https://wirenext.github.io/AlertasAemet/" loading="lazy"></iframe>
-    </div>
-
-    <div class="column map-column">
+    <div class="column">
       <h2>🌧️ Radar de Pluja</h2>
       <iframe src="https://embed.windy.com/embed.html?type=map&location=coordinates&zoom=7&overlay=radar&product=radar&lat=39.4&lon=-0.4" loading="lazy"></iframe>
     </div>
 
-    <div class="column map-column">
-      <h2>🚨 Emergències 112</h2>
-      <iframe src="https://wirenext.github.io/EmergenciasCV/" loading="lazy"></iframe>
-    </div>
-
-    <footer>
-      <p>© 2025 Meteorologia CV — WireNext</p>
-    </footer>
   </main>
 
 <nav>
@@ -56,6 +46,10 @@
   <a href="transit.html">
     <span class="nav-icon">🚗</span>
     <span class="nav-label">Trànsit</span>
+  </a>
+  <a href="buscador.html">
+    <span class="nav-icon">🔍</span>
+    <span class="nav-label">Cerca</span>
   </a>
   <button id="theme-toggle">
     <span class="nav-icon">🌓</span>
