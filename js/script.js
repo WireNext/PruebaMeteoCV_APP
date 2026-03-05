@@ -16,7 +16,7 @@ function initTheme() {
     }
 }
 
-// 2. BUSCADOR
+// 2. BUSCADOR Y CARGA
 async function buscarTiempo(poble, targetId) {
     try {
         const geo = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(poble)}&count=1&language=ca`);
@@ -24,58 +24,32 @@ async function buscarTiempo(poble, targetId) {
         if (!geoData.results) return;
         const m = geoData.results[0];
         
-        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${m.latitude}&longitude=${m.longitude}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code,precipitation_probability,precipitation&daily=weather_code,temperature_2m_max,temperature_2m_min,uv_index_max,sunrise,sunset,precipitation_sum&timezone=auto`);
-        datosGlobales = await res.json();
-        
-        const aviso = await obtenerAvisoDesdeGeoJSON(m.latitude, m.longitude);
-        renderizar(datosGlobales, m.name, targetId, aviso);
+        // Guardamos memoria
+        localStorage.setItem("ultimPobleBuscat", m.name);
+        localStorage.setItem("ultimaLat", m.latitude);
+        localStorage.setItem("ultimaLon", m.longitude);
+
+        await cargarDirecto(m.latitude, m.longitude, m.name, targetId);
     } catch (e) { console.error(e); }
 }
 
-// --- LÓGICA DEL BUSCADOR ---
+async function cargarDirecto(lat, lon, nombre, targetId = "resultado-tiempo-home") {
+    try {
+        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code,precipitation_probability,precipitation&daily=weather_code,temperature_2m_max,temperature_2m_min,uv_index_max,sunrise,sunset,precipitation_sum&timezone=auto`);
+        datosGlobales = await res.json();
+        const aviso = await obtenerAvisoDesdeGeoJSON(lat, lon);
+        renderizar(datosGlobales, nombre, targetId, aviso);
+    } catch (e) { console.error(e); }
+}
+
 function ejecutarBusqueda() {
     const input = document.getElementById("buscador-input");
     const ciudad = input.value.trim();
-    
     if (ciudad.length > 2) {
-        // Guardamos en el historial del navegador
-        localStorage.setItem("ultimPobleBuscat", ciudad);
-        // Ejecutamos la búsqueda principal
         buscarTiempo(ciudad, "resultado-tiempo-home");
-        // Limpiamos el input y quitamos el foco
         input.blur();
     }
 }
-
-// Inicialización cuando carga la página
-document.addEventListener("DOMContentLoaded", () => {
-    initTheme();
-
-    const inputBusqueda = document.getElementById("buscador-input");
-    const btnBusqueda = document.getElementById("btn-buscar");
-
-    // 1. Escuchar el clic en la lupa
-    if (btnBusqueda) {
-        btnBusqueda.onclick = (e) => {
-            e.preventDefault();
-            ejecutarBusqueda();
-        };
-    }
-
-    // 2. Escuchar la tecla ENTER
-    if (inputBusqueda) {
-        inputBusqueda.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") {
-                e.preventDefault();
-                ejecutarBusqueda();
-            }
-        });
-    }
-
-    // 3. Cargar la última ciudad buscada o Valencia por defecto
-    const guardado = localStorage.getItem("ultimPobleBuscat") || "Valencia";
-    buscarTiempo(guardado, "resultado-tiempo-home");
-});
 
 // 3. RENDERIZAR
 function renderizar(data, nombre, targetId, aviso) {
@@ -84,7 +58,6 @@ function renderizar(data, nombre, targetId, aviso) {
     const { current, daily, hourly } = data;
     const horaActual = new Date().getHours();
 
-    // Lógica de Alerta
     let alertaHtml = "";
     if (aviso && aviso.titulo) {
         const textColor = (aviso.color === "#f3f702" || aviso.color === "yellow") ? "#222" : "#fff";
@@ -92,7 +65,7 @@ function renderizar(data, nombre, targetId, aviso) {
             <div class="alerta-card" style="background-color: ${aviso.color}; color: ${textColor};">
                 <h4 style="margin:0;">⚠️ ${aviso.titulo}</h4>
                 <p class="alerta-desc" style="margin:8px 0; font-size:0.9rem;">${aviso.desc}</p>
-                <a href="avisos.html" target="_blank" style="color:${textColor}; font-weight:bold; font-size:0.8rem; border:1px solid ${textColor}; padding:3px 8px; border-radius:5px; text-decoration:none;">Veure mapa</a>
+                <a href="avisos.html" style="color:${textColor}; font-weight:bold; font-size:0.8rem; border:1px solid ${textColor}; padding:3px 8px; border-radius:5px; text-decoration:none;">Veure mapa</a>
             </div>`;
     }
 
@@ -103,9 +76,7 @@ function renderizar(data, nombre, targetId, aviso) {
             <div class="hero-icon">${obtenerIcono(current.weather_code)}</div>
             <div class="hero-range">MÀX: ${Math.round(daily.temperature_2m_max[0])}° &nbsp;&nbsp; MÍN: ${Math.round(daily.temperature_2m_min[0])}°</div>
         </div>
-
         ${alertaHtml}
-
         <div class="column">
             <h2>Pròximes 24 hores</h2>
             <div class="scroll-x">`;
@@ -140,7 +111,7 @@ function renderizar(data, nombre, targetId, aviso) {
     container.innerHTML = html;
 }
 
-// 4. MODAL
+// 4. MODAL Y AUXILIARES
 function abrirDetalleDia(index) {
     const modal = document.getElementById("modal-detalle");
     const overlay = document.getElementById("modal-overlay");
@@ -181,7 +152,6 @@ function obtenerIcono(code) {
     return "🌡️";
 }
 
-// FUNCIÓN DE AVISOS CORREGIDA
 async function obtenerAvisoDesdeGeoJSON(lat, lon) {
     try {
         const res = await fetch(urlGeoJSON);
@@ -198,7 +168,7 @@ async function obtenerAvisoDesdeGeoJSON(lat, lon) {
                 });
                 return {
                     titulo: temp.querySelector("h3") ? temp.querySelector("h3").innerText : "Avís Actiu",
-                    desc: descDetallada || (temp.querySelector("p:nth-of-type(3)") ? temp.querySelector("p:nth-of-type(3)").innerText : "Consulta els detalls."),
+                    desc: descDetallada || "Consulta els detalls en el mapa.",
                     color: props.fillColor || "#f3f702"
                 };
             }
@@ -219,91 +189,73 @@ function puntoEnPoligono(lat, lon, coords) {
 }
 
 function obtenerUbicacionGPS() {
-    if (!navigator.geolocation) {
-        alert("El teu navegador no suporta geolocalització.");
-        return;
-    }
-
-    // Mostramos un mensaje visual opcional
+    if (!navigator.geolocation) return;
     const input = document.getElementById("buscador-input");
     input.placeholder = "Obtenint ubicació...";
 
     navigator.geolocation.getCurrentPosition(async (pos) => {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
-
         try {
-            // 1. Usamos geocodificación inversa para saber el nombre del pueblo (opcional pero queda mejor)
             const resNom = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
             const dataNom = await resNom.json();
             const nombrePueblo = dataNom.address.city || dataNom.address.town || dataNom.address.village || "La meua ubicació";
-
-            // 2. Llamamos a Open-Meteo directamente con las coordenadas
-            const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code,precipitation_probability,precipitation&daily=weather_code,temperature_2m_max,temperature_2m_min,uv_index_max,sunrise,sunset,precipitation_sum&timezone=auto`);
-            datosGlobales = await res.json();
-
-            // 3. Buscamos avisos y renderizamos
-            const aviso = await obtenerAvisoDesdeGeoJSON(lat, lon);
-            renderizar(datosGlobales, nombrePueblo, "resultado-tiempo-home", aviso);
             
-            // Guardamos esta como la última "búsqueda"
             localStorage.setItem("ultimPobleBuscat", nombrePueblo);
+            localStorage.setItem("ultimaLat", lat);
+            localStorage.setItem("ultimaLon", lon);
+            
+            await cargarDirecto(lat, lon, nombrePueblo);
             input.placeholder = "Cerca el teu poble...";
             input.value = "";
-
-        } catch (e) {
-            console.error(e);
-            alert("Error al carregar les dades de la teua ubicación.");
-        }
-    }, (error) => {
-        alert("No s'ha pogut accedir a la ubicació. Revisa els permisos del navegador.");
-        input.placeholder = "Cerca el teu poble...";
+        } catch (e) { console.error(e); }
     });
 }
 
+// 5. INICIALIZACIÓN (DOM CONTENT LOADED)
 document.addEventListener("DOMContentLoaded", () => {
     initTheme();
-    const guardado = localStorage.getItem("ultimPobleBuscat") || "Valencia";
-    buscarTiempo(guardado, "resultado-tiempo-home");
-    const navLinks = document.querySelectorAll('nav a');
 
-    navLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            // 1. Quitamos la clase active de todos los enlaces
-            navLinks.forEach(l => l.classList.remove('active'));
-            
-            // 2. Se la añadimos al que hemos pulsado
-            this.classList.add('active');
-        });
-    });
+    // Eventos Buscador
+    const inputBusqueda = document.getElementById("buscador-input");
+    const btnBusqueda = document.getElementById("btn-buscar");
+    if (btnBusqueda) btnBusqueda.onclick = (e) => { e.preventDefault(); ejecutarBusqueda(); };
+    if (inputBusqueda) inputBusqueda.onkeypress = (e) => { if (e.key === "Enter") ejecutarBusqueda(); };
 
+    // Evento GPS
     const btnGPS = document.getElementById("btn-gps");
-    if (btnGPS) {
-        btnGPS.onclick = () => obtenerUbicacionGPS();
-    }
+    if (btnGPS) btnGPS.onclick = () => obtenerUbicacionGPS();
 
+    // Modal Privacidad
     const modalPriv = document.getElementById("modal-privacitat");
     const btnPriv = document.getElementById("btn-acceptar-privacitat");
-
-    // 1. Comprovar si ja s'ha acceptat la privadesa
-    const privadesaAcceptada = localStorage.getItem("privadesa_v1");
-
-    if (!privadesaAcceptada) {
-        modalPriv.style.display = "flex"; // Mostrar si és la primera vegada
+    if (!localStorage.getItem("privadesa_v1") && modalPriv) {
+        modalPriv.style.display = "flex";
     }
-
-    // 2. Tancar i guardar preferència
     if (btnPriv) {
         btnPriv.onclick = () => {
             localStorage.setItem("privadesa_v1", "true");
             modalPriv.style.display = "none";
-            
-            // OPCIONAL: Llançar el GPS automàticament després d'acceptar
-            // obtenerUbicacionGPS(); 
         };
     }
 
-    // Marcamos "Inicio" como activo por defecto al cargar
-    // Suponiendo que el primer enlace es Inicio
-    if(navLinks[0]) navLinks[0].classList.add('active');
+    // Navegación Activa
+    const navLinks = document.querySelectorAll('nav a');
+    navLinks.forEach(link => {
+        link.onclick = () => {
+            navLinks.forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+        };
+    });
+
+    // CARGA INICIAL (MEMORIA)
+    const ultimoNombre = localStorage.getItem("ultimPobleBuscat");
+    const ultimaLat = localStorage.getItem("ultimaLat");
+    const ultimaLon = localStorage.getItem("ultimaLon");
+
+    if (ultimoNombre && ultimaLat && ultimaLon) {
+        cargarDirecto(ultimaLat, ultimaLon, ultimoNombre);
+    } else {
+        buscarTiempo("Valencia", "resultado-tiempo-home");
+    }
 });
