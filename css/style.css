@@ -1,19 +1,19 @@
 /* --- VARIABLES --- */
 :root {
-  --bg-gradient: linear-gradient(180deg, #4facfe 0%, #00f2fe 100%);
+  /* Nuevo degradado más suave y menos "neon" para no cansar la vista */
+  --bg-gradient: linear-gradient(180deg, #5b9bd5 0%, #87ceeb 100%);
   --text-color: #ffffff;
-  --card-bg: rgba(255, 255, 255, 0.25); /* Un poco más opaco para legibilidad */
+  --card-bg: rgba(255, 255, 255, 0.22); 
   --nav-bg: rgba(255, 255, 255, 0.3);
   --blur: blur(25px);
-  /* Sombra de texto para modo claro */
-  --text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2); 
+  --text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3); 
 }
 
 [data-theme="dark"] {
   --bg-gradient: linear-gradient(180deg, #1e3c72 0%, #2a5298 100%);
   --card-bg: rgba(0, 0, 0, 0.3);
   --nav-bg: rgba(0, 0, 0, 0.4);
-  --text-shadow: none; /* En modo oscuro no hace falta */
+  --text-shadow: none; 
 }
 
 body {
@@ -22,7 +22,7 @@ body {
   background: var(--bg-gradient);
   background-attachment: fixed;
   color: var(--text-color);
-  text-shadow: var(--text-shadow); /* Aplicamos sombra suave a todo el texto */
+  text-shadow: var(--text-shadow); 
   min-height: 100vh;
   padding-bottom: 110px; 
   overflow-x: hidden;
@@ -36,50 +36,42 @@ body {
 #search-wrapper { max-width: 500px; margin: 0 auto 25px; }
 .search-bar {
     display: flex; align-items: center;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: 20px; padding: 5px 15px;
 }
-#buscador-input { 
-    flex: 1; background: transparent; border: none; padding: 12px 5px; 
-    color: white; outline: none; font-size: 1rem; 
-    text-shadow: none; /* El input mejor sin sombra */
-}
-#buscador-input::placeholder { color: rgba(255,255,255,0.8); }
+#buscador-input { flex: 1; background: transparent; border: none; padding: 12px 5px; color: white; outline: none; font-size: 1rem; text-shadow: none; }
+#buscador-input::placeholder { color: rgba(255,255,255,0.9); }
 #btn-buscar { background: transparent; border: none; font-size: 1.2rem; cursor: pointer; text-shadow: none; }
 
 /* --- HERO --- */
 .weather-hero { text-align: center; padding: 20px 0 10px; }
 .hero-pueblo { font-size: 2.2rem; margin: 0; font-weight: 400; }
 .hero-temp { font-size: 5.5rem; font-weight: 200; margin: 5px 0; }
-.hero-icon { font-size: 4rem; line-height: 1; display: block; margin: 10px 0; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
-.hero-range { font-size: 1.1rem; font-weight: 500; margin-bottom: 15px; opacity: 1; display: block; }
+.hero-icon { font-size: 4rem; line-height: 1; display: block; margin: 10px 0; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2)); }
+.hero-range { font-size: 1.1rem; font-weight: 500; margin-bottom: 15px; display: block; }
 
-/* --- TARJETA DE AVISO --- */
+/* --- ALERTA --- */
 .alerta-card {
     border-radius: 18px; padding: 15px; margin: 10px 0 25px;
     border: 1px solid rgba(255,255,255,0.2);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     animation: slideIn 0.4s ease-out;
-    text-shadow: none; /* Quitamos la sombra aquí para que el texto sea nítido sobre el color del aviso */
+    text-shadow: none;
 }
 .alerta-card h4 { margin: 0 0 5px; font-size: 1rem; font-weight: 700; }
 .alerta-desc { font-size: 0.85rem; line-height: 1.3; margin-bottom: 12px; }
-.alerta-link { 
-    text-decoration: none; font-weight: 700; font-size: 0.75rem; 
-    text-transform: uppercase; background: rgba(0,0,0,0.1); 
-    padding: 6px 12px; border-radius: 10px; display: inline-block;
-}
+.alerta-link { text-decoration: none; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; background: rgba(0,0,0,0.1); padding: 6px 12px; border-radius: 10px; display: inline-block; }
 
 /* --- COLUMNAS --- */
 .column {
   background: var(--card-bg) !important;
   backdrop-filter: var(--blur); border-radius: 20px; 
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   margin-bottom: 20px; overflow: hidden;
 }
-.column h2 { font-size: 0.75rem; text-transform: uppercase; background: rgba(255, 255, 255, 0.1); padding: 10px 15px; margin: 0; opacity: 0.9; }
+.column h2 { font-size: 0.75rem; text-transform: uppercase; background: rgba(255, 255, 255, 0.15); padding: 10px 15px; margin: 0; opacity: 1; }
 
 .scroll-x { display: flex; overflow-x: auto; padding: 20px 10px; gap: 25px; scrollbar-width: none; }
 .scroll-x::-webkit-scrollbar { display: none; }
@@ -87,16 +79,16 @@ body {
 .hora-txt { font-size: 0.8rem; font-weight: 600; }
 
 .lista-vertical { padding: 0 15px; }
-.dia-fila { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-.dia-nom { flex: 1.5; text-transform: capitalize; font-weight: 500; text-align: left; }
+.dia-fila { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.15); }
+.dia-nom { flex: 1.5; text-transform: capitalize; font-weight: 500; }
 .dia-icon { flex: 1; text-align: center; font-size: 1.5rem; display: flex; justify-content: center; }
 .dia-temps { flex: 1.5; text-align: right; font-weight: 500; }
 
 /* --- GRID DETALLES --- */
 .detalles-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-.detalle-card { background: var(--card-bg); backdrop-filter: var(--blur); border-radius: 20px; padding: 15px; border: 1px solid rgba(255, 255, 255, 0.1); }
-.detalle-card h3 { font-size: 0.65rem; opacity: 0.8; text-transform: uppercase; margin: 0; }
-.detalle-valor { font-size: 1.8rem; font-weight: 500; margin-top: 10px; }
+.detalle-card { background: var(--card-bg); backdrop-filter: var(--blur); border-radius: 20px; padding: 15px; border: 1px solid rgba(255, 255, 255, 0.2); }
+.detalle-card h3 { font-size: 0.65rem; opacity: 0.9; text-transform: uppercase; margin: 0; }
+.detalle-valor { font-size: 1.4rem; font-weight: 600; margin-top: 8px; }
 
 /* --- NAV --- */
 nav {
@@ -104,13 +96,14 @@ nav {
   position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
   width: 95%; max-width: 480px; height: 65px;
   background: var(--nav-bg) !important; backdrop-filter: var(--blur);
-  border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 25px; z-index: 10000;
+  border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 25px; z-index: 10000;
   text-shadow: none;
 }
 nav a, #theme-toggle { text-decoration: none; color: white !important; display: flex; flex-direction: column; align-items: center; flex: 1; background: transparent; border: none; cursor: pointer; }
 .nav-icon { font-size: 1.3rem; }
 .nav-label { font-size: 0.65rem; font-weight: 500; }
 
-iframe { width: 100%; height: 400px; border: none; display: block; }
+/* --- MAPAS --- */
+iframe { width: 100%; height: 450px; border: none; display: block; border-radius: 0 0 20px 20px; }
 
 @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
