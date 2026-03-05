@@ -16,15 +16,15 @@ function initTheme() {
     }
 }
 
-// 2. MATEMÁTICAS: ¿Está el punto dentro del polígono?
+// 2. MATEMÁTICAS: Punto en Polígono (Compatible con Polygons y MultiPolygons)
 function puntoEnPoligono(lat, lon, coords) {
     let inside = false;
-    // Manejar GeoJSON si tiene arrays anidados adicionales (MultiPolygon vs Polygon)
-    const polygon = Array.isArray(coords[0][0][0]) ? coords[0][0] : (Array.isArray(coords[0][0]) ? coords[0] : coords);
-    
-    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-        let xi = polygon[i][0], yi = polygon[i][1];
-        let xj = polygon[j][0], yj = polygon[j][1];
+    // Normalizamos la estructura para que siempre sea una lista de anillos
+    let rings = Array.isArray(coords[0][0][0]) ? coords[0][0] : (Array.isArray(coords[0][0]) ? coords[0] : coords);
+
+    for (let i = 0, j = rings.length - 1; i < rings.length; j = i++) {
+        let xi = rings[i][0], yi = rings[i][1];
+        let xj = rings[j][0], yj = rings[j][1];
         let intersect = ((yi > lat) != (yj > lat)) && (lon < (xj - xi) * (lat - yi) / (yj - yi) + xi);
         if (intersect) inside = !inside;
     }
@@ -39,13 +39,12 @@ async function obtenerAvisoDesdeGeoJSON(lat, lon) {
         
         for (const feature of data.features) {
             const coords = feature.geometry.coordinates;
-            // Verificamos si las coordenadas están en este polígono
             if (puntoEnPoligono(lat, lon, coords)) {
                 const props = feature.properties;
                 const temp = document.createElement("div");
                 temp.innerHTML = props.popup_html;
                 
-                // EXTRAER DESCRIPCIÓN DETALLADA (EJ: Oleaje del este...)
+                // Extraemos la descripción que sigue a la palabra "Descripción:"
                 let descDetallada = "";
                 const parrafos = temp.querySelectorAll("p");
                 parrafos.forEach(p => {
@@ -77,9 +76,7 @@ async function buscarTiempo(poble, targetId) {
         const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${m.latitude}&longitude=${m.longitude}&current=temperature_2m,relative_humidity_2m,weather_code,apparent_temperature,wind_speed_10m&hourly=temperature_2m,weather_code,precipitation_probability&daily=weather_code,temperature_2m_max,temperature_2m_min,uv_index_max&timezone=auto`);
         const d = await res.json();
         
-        // Buscamos si hay aviso zonal
         const aviso = await obtenerAvisoDesdeGeoJSON(m.latitude, m.longitude);
-        
         renderizar(d, m.name, targetId, aviso);
     } catch (e) { console.error(e); }
 }
@@ -99,7 +96,7 @@ function renderizar(data, nombre, targetId, aviso) {
 
     let alertaHtml = "";
     if (aviso) {
-        const textColor = aviso.color === "#f3f702" ? "#222" : "#fff";
+        const textColor = (aviso.color === "#f3f702" || aviso.color === "yellow") ? "#222" : "#fff";
         alertaHtml = `
             <div class="alerta-card" style="background-color: ${aviso.color}; color: ${textColor}">
                 <h4>${aviso.titulo}</h4>
