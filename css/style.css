@@ -23,83 +23,76 @@ body {
   background-attachment: fixed;
   color: var(--text-color);
   min-height: 100vh;
-  padding-bottom: 120px; /* Espacio para que el menú no tape nada */
+  padding-bottom: 110px; 
   transition: background 0.5s ease;
   overflow-x: hidden;
 }
 
-/* --- NAVEGACIÓN RESPONSIVA (EL CAMBIO CLAVE) --- */
+/* --- NAVEGACIÓN INFERIOR (CORREGIDA) --- */
 nav {
   display: flex;
   justify-content: space-around;
   align-items: center;
   
   position: fixed;
-  bottom: 30px; 
+  bottom: 15px; 
   left: 50%;
   transform: translateX(-50%);
   
-  /* Comportamiento por defecto (Móvil) */
-  width: 90%; 
-  max-width: 400px; /* En móvil no queremos que sea gigante */
-  height: 65px;
+  /* Ajuste de ancho */
+  width: 95%; 
+  max-width: 500px; 
+  height: 65px; /* Un poco más alta para que quepa el texto debajo */
   
   background: var(--nav-bg) !important;
   backdrop-filter: var(--blur);
   -webkit-backdrop-filter: var(--blur);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 40px;
+  border-radius: 25px;
   z-index: 10000;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-  padding: 0 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  padding: 5px;
   box-sizing: border-box;
 }
 
-/* Cuando la pantalla es de ordenador (más de 768px) */
-@media (min-width: 768px) {
-    nav {
-        width: auto; /* Se ajusta al contenido */
-        min-width: 350px;
-        bottom: 40px; /* Un poco más arriba en PC queda más elegante */
-        padding: 0 30px;
-    }
-}
-
-nav a {
+nav a, #theme-toggle {
   text-decoration: none;
-  font-size: 1.6rem;
+  color: white !important;
   flex: 1;
   display: flex;
+  flex-direction: column; /* Icono arriba, texto abajo */
   justify-content: center;
   align-items: center;
   height: 100%;
   transition: all 0.2s ease;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  min-width: 0; /* Permite que se encojan si es necesario */
 }
 
-nav a:hover {
-    transform: translateY(-5px); /* Efecto sutil al pasar el ratón en PC */
+/* Tamaño de los iconos */
+nav a span, nav a i, .nav-icon {
+  font-size: 1.3rem; /* Más pequeño para que quepa */
+  margin-bottom: 2px;
+}
+
+/* Tamaño de los nombres (Muy pequeños estilo App) */
+.nav-label {
+  font-size: 0.65rem; 
+  font-weight: 500;
+  opacity: 0.9;
+  white-space: nowrap; /* Evita que el nombre salte de línea */
 }
 
 nav a:active {
-  transform: scale(0.8);
-}
-
-#theme-toggle {
-  background: transparent;
-  border: none;
-  font-size: 1.3rem;
-  color: white !important;
-  cursor: pointer;
-  flex: 1;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  transform: scale(0.9);
 }
 
 /* --- CONTENEDORES --- */
 .container {
-  max-width: 800px; /* Un poco más ancho para que en PC se vea mejor */
+  max-width: 800px;
   margin: 0 auto;
   padding: 20px;
   box-sizing: border-box;
@@ -107,62 +100,50 @@ nav a:active {
 
 header h1 {
   font-weight: 300;
-  font-size: 2rem;
+  font-size: 1.8rem;
   text-align: center;
-  margin: 40px 0 30px;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  margin: 30px 0;
 }
 
-/* --- TARJETAS ESTILO APPLE --- */
 .column {
   background: var(--card-bg) !important;
   backdrop-filter: var(--blur);
   -webkit-backdrop-filter: var(--blur);
-  border-radius: 28px;
+  border-radius: 25px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   margin-bottom: 25px;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.05);
 }
 
 .column h2 {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
+  letter-spacing: 1px;
   background: rgba(255, 255, 255, 0.08);
-  padding: 15px 25px;
+  padding: 12px 20px;
   margin: 0;
-  opacity: 0.8;
   font-weight: 600;
 }
 
-/* --- SLIDER HORAS --- */
+/* --- ELEMENTOS DEL TIEMPO --- */
 #proximas-horas-container {
     display: flex;
     overflow-x: auto;
-    gap: 25px;
-    padding: 25px;
+    gap: 20px;
+    padding: 20px;
     scrollbar-width: none;
 }
 #proximas-horas-container::-webkit-scrollbar { display: none; }
 
-.hora-item {
-    text-align: center;
-    min-width: 60px;
-}
-
-/* --- LISTA DÍAS --- */
-.previsio-grid { padding: 15px 25px; }
-
+.hora-item { text-align: center; min-width: 55px; }
+.previsio-grid { padding: 10px 20px; }
 .dia-caja {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 0;
+    padding: 14px 0;
     border-bottom: 1px solid rgba(255,255,255,0.1);
 }
-
-.dia-caja:last-child { border: none; }
 
 /* --- IFRAMES --- */
 iframe {
@@ -174,7 +155,7 @@ iframe {
 
 footer {
   text-align: center;
-  padding: 60px 20px;
+  padding: 40px 20px 100px;
   opacity: 0.5;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
 }
