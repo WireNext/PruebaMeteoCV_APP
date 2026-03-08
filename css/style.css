@@ -308,3 +308,18 @@ nav a.active::after {
 
 .btn-primari:active { transform: scale(0.95); }
 .nota-peu { font-size: 0.7rem; opacity: 0.6; margin-top: 15px; }
+
+.seo-card {
+    background: rgba(255, 255, 255, 0.1); /* Efecte vidre */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 800px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--text-color); /* Usa la teua variable de color */
+    text-align: left;
+}

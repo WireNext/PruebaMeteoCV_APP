@@ -3,50 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="Avisos meteorològics oficials de l'AEMET per a la Comunitat Valenciana.">
   <title>Avisos - Meteo CV</title>
   <link rel="stylesheet" href="css/style.css" />
   <link rel="icon" href="multimedia/logo.png">
 </head>
 <body>
-
   <main class="container">
-    <header>
-      <h1>Avisos AEMET</h1>
-    </header>
+    <header><h1>Avisos AEMET</h1></header>
 
     <div class="column">
-      <h2>Mapa d'Avisos Vigents</h2>
       <iframe src="https://wirenext.github.io/AlertasAemet/" loading="lazy"></iframe>
     </div>
     
-    <p style="text-align: center; opacity: 0.7; font-size: 0.8rem; padding: 0 20px;">
-        Consulta els avisos meteorològics oficials de l'AEMET per a la Comunitat Valenciana.
-    </p>
+    <section class="seo-card">
+        <p>Consulta les <strong>alertes oficials de l'AEMET</strong>. Informació actualitzada sobre avisos per pluja, vent, neu o temperatures extremes a la Comunitat Valenciana. Consulta el nivell de risc al teu municipi abans de desplaçar-te.</p>
+    </section>
   </main>
 
   <nav>
-    <a href="index.html">
-      <span class="nav-icon">🏠</span>
-      <span class="nav-label">Inici</span>
-    </a>
-    <a href="avisos.html" class="active">
-      <span class="nav-icon">⚠️</span>
-      <span class="nav-label">Avisos</span>
-    </a>
-    <a href="radar.html">
-      <span class="nav-icon">🌧️</span>
-      <span class="nav-label">Radar</span>
-    </a>
-    <a href="transit.html">
-      <span class="nav-icon">🚗</span>
-      <span class="nav-label">Trànsit</span>
-    </a>
-    <button id="theme-toggle">
-      <span class="nav-icon">🌓</span>
-      <span class="nav-label">Mode</span>
-    </button>
+    <a href="index.html"><span class="nav-icon">🏠</span><span class="nav-label">Inici</span></a>
+    <a href="avisos.html" class="active"><span class="nav-icon">⚠️</span><span class="nav-label">Avisos</span></a>
+    <a href="radar.html"><span class="nav-icon">🌧️</span><span class="nav-label">Radar</span></a>
+    <a href="transit.html"><span class="nav-icon">🚗</span><span class="nav-label">Trànsit</span></a>
+    <button id="theme-toggle"><span class="nav-icon">🌓</span><span class="nav-label">Mode</span></button>
   </nav>
-
   <script src="js/script.js"></script>
 </body>
 </html>

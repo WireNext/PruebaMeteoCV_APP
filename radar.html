@@ -3,51 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="description" content="Radar de pluja en directe per a la Comunitat Valenciana. Segueix l'evolució de les tempestes i la predicció de pluja.">
+  <meta name="description" content="Radar de pluja en directe per a la Comunitat Valenciana. Segueix l'evolució de les tempestes.">
   <title>Radar - Meteo CV</title>
   <link rel="stylesheet" href="css/style.css" />
   <link rel="icon" href="multimedia/logo.png">
 </head>
 <body>
-
   <main class="container">
-    <header>
-      <h1>Radar de Pluja</h1>
-    </header>
+    <header><h1>Radar de Pluja</h1></header>
 
     <div class="column">
-      <h2>Precipitació en temps real</h2>
       <iframe src="https://embed.windy.com/embed.html?type=map&location=coordinates&zoom=7&overlay=radar&product=radar&lat=39.4&lon=-0.4" loading="lazy"></iframe>
     </div>
     
-    <p style="text-align: center; opacity: 0.7; font-size: 0.8rem;">
-        Dades actualitzades per Windy.
-    </p>
+    <section class="seo-card">
+        <p>Segueix en temps real l'evolució de les precipitacions amb el nostre <strong>radar meteorològic</strong>. Visualitza on plou actualment i la trajectòria de les tempestes a València, Alacant i Castelló. Dades optimitzades per al seguiment de pluges i DANA en temps real.</p>
+    </section>
   </main>
 
   <nav>
-    <a href="index.html">
-      <span class="nav-icon">🏠</span>
-      <span class="nav-label">Inici</span>
-    </a>
-    <a href="avisos.html">
-      <span class="nav-icon">⚠️</span>
-      <span class="nav-label">Avisos</span>
-    </a>
-    <a href="radar.html" class="active">
-      <span class="nav-icon">🌧️</span>
-      <span class="nav-label">Radar</span>
-    </a>
-    <a href="transit.html">
-      <span class="nav-icon">🚗</span>
-      <span class="nav-label">Trànsit</span>
-    </a>
-    <button id="theme-toggle">
-      <span class="nav-icon">🌓</span>
-      <span class="nav-label">Mode</span>
-    </button>
+    <a href="index.html"><span class="nav-icon">🏠</span><span class="nav-label">Inici</span></a>
+    <a href="avisos.html"><span class="nav-icon">⚠️</span><span class="nav-label">Avisos</span></a>
+    <a href="radar.html" class="active"><span class="nav-icon">🌧️</span><span class="nav-label">Radar</span></a>
+    <a href="transit.html"><span class="nav-icon">🚗</span><span class="nav-label">Trànsit</span></a>
+    <button id="theme-toggle"><span class="nav-icon">🌓</span><span class="nav-label">Mode</span></button>
   </nav>
-
   <script src="js/script.js"></script>
 </body>
 </html>

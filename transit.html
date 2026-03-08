@@ -3,46 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="Estat del trànsit i carreteres en temps real a la Comunitat Valenciana.">
   <title>Trànsit - Meteo CV</title>
   <link rel="stylesheet" href="css/style.css" />
   <link rel="icon" href="multimedia/logo.png">
 </head>
 <body>
-
   <main class="container">
-    <header>
-      <h1>Estat del Trànsit</h1>
-    </header>
+    <header><h1>Estat del Trànsit</h1></header>
 
     <div class="column">
-      <h2>Incidències a les carreteres</h2>
       <iframe src="https://wirenext.github.io/IncidenciasCarreteras/" loading="lazy"></iframe>
     </div>
+
+    <section class="seo-card">
+        <p>Informació sobre l'<strong>estat de les carreteres</strong> en temps real. Revisa retencions, obres i incidències provocades per l'oratge en les principals vies (A-7, AP-7, A-3) i carreteres de la xarxa valenciana.</p>
+    </section>
   </main>
 
   <nav>
-    <a href="index.html">
-      <span class="nav-icon">🏠</span>
-      <span class="nav-label">Inici</span>
-    </a>
-    <a href="avisos.html">
-      <span class="nav-icon">⚠️</span>
-      <span class="nav-label">Avisos</span>
-    </a>
-    <a href="radar.html">
-      <span class="nav-icon">🌧️</span>
-      <span class="nav-label">Radar</span>
-    </a>
-    <a href="transit.html" class="active">
-      <span class="nav-icon">🚗</span>
-      <span class="nav-label">Trànsit</span>
-    </a>
-    <button id="theme-toggle">
-      <span class="nav-icon">🌓</span>
-      <span class="nav-label">Mode</span>
-    </button>
+    <a href="index.html"><span class="nav-icon">🏠</span><span class="nav-label">Inici</span></a>
+    <a href="avisos.html"><span class="nav-icon">⚠️</span><span class="nav-label">Avisos</span></a>
+    <a href="radar.html"><span class="nav-icon">🌧️</span><span class="nav-label">Radar</span></a>
+    <a href="transit.html" class="active"><span class="nav-icon">🚗</span><span class="nav-label">Trànsit</span></a>
+    <button id="theme-toggle"><span class="nav-icon">🌓</span><span class="nav-label">Mode</span></button>
   </nav>
-
   <script src="js/script.js"></script>
 </body>
 </html>
