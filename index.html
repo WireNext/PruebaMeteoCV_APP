@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="Consulta el temps a la Comunitat Valenciana. Predicció per municipis, avisos de l'AEMET i radar meteorològic en temps real.">
   <title>Meteo CV</title>
   <link rel="stylesheet" href="css/style.css" />
   <link rel="icon" href="multimedia/logo.png">
@@ -28,6 +29,11 @@
       <h2>🌧️ Radar de Pluja</h2>
       <iframe src="https://embed.windy.com/embed.html?type=map&location=coordinates&zoom=7&overlay=radar&product=radar&lat=39.4&lon=-0.4" loading="lazy"></iframe>
     </div>
+
+    <footer style="margin-top: 40px; padding-bottom: 100px; text-align: center; opacity: 0.5; font-size: 0.7rem;">
+    <p>Meteo CV: Informació meteorològica en temps real per a la Comunitat Valenciana.</p>
+    <p>Dades de l'AEMET, Windy i Emergències 112 CV.</p>
+    </footer>
 
   </main>
 
@@ -76,21 +82,32 @@
 
   <script src="js/script.js"></script>
 
-<div id="modal-privacitat" class="modal-full">
-    <div class="modal-privacitat-content">
-        <div class="privacitat-icon">🛡️</div>
-        <h2>Benvingut a la teua App del Temps</h2>
-        <p>Per a oferir-te la millor experiència, volem informar-te sobre la teua privadesa:</p>
-        
+<div class="modal-privacitat-content">
+    <div class="privacitat-icon">🛡️</div>
+    <h2>Meteo CV: El temps a la Comunitat Valenciana</h2>
+    
+    <p>Benvingut a la teua aplicació de meteorologia local. <strong>Meteo CV</strong> és un projecte independent dissenyat per a oferir la informació del <strong>temps a València, Alacant i Castelló</strong> de la manera més neta i ràpida possible, seguint l'estètica de les millors apps de clima.</p>
+    
+    <div style="text-align: left; margin: 20px 0; font-size: 0.9rem; line-height: 1.5;">
+        <p>Aquesta web aglutina dades oficials i eines avançades per al seguiment de l'oratge:</p>
         <ul class="privacitat-lista">
-            <li>📍 <strong>Ubicació:</strong> Només s'usa per a consultar el temps actual i no s'envia a cap servidor extern.</li>
-            <li>💾 <strong>Dades Locals:</strong> El teu historial es guarda exclusivament al teu navegador (Local Storage).</li>
-            <li>🚫 <strong>Sense Rastreig:</strong> No usem galetes (cookies) de publicitat ni compartim dades amb tercers.</li>
+            <li>📍 <strong>Predicció per municipis:</strong> Consulta el temps al teu poble amb dades actualitzades.</li>
+            <li>🌧️ <strong>Radar de pluja:</strong> Seguiment de precipitacions i tempestes en temps real a tota la Comunitat Valenciana.</li>
+            <li>⚠️ <strong>Avisos AEMET:</strong> Alertes oficials de l'Agència Estatal de Meteorologia per a evitar riscs.</li>
+            <li>🚗 <strong>Estat del Trànsit:</strong> Informació de les carreteres i incidències de la DGT/112 CV.</li>
         </ul>
-
-        <button id="btn-acceptar-privacitat" class="btn-primari">Ho entenc i vull continuar</button>
-        <p class="nota-peu">En tancar este missatge, acceptes l'ús local de les teues dades.</p>
     </div>
+
+    <p><strong>Privadesa i dades:</strong></p>
+    <ul class="privacitat-lista">
+        <li>📍 <strong>Ubicació:</strong> Només s'usa localment per al clima actual i no s'emmagatzema en cap servidor.</li>
+        <li>💾 <strong>Dades Locals:</strong> El teu historial de cerques es guarda exclusivament al teu navegador.</li>
+        <li>🚫 <strong>Sense Rastreig:</strong> No usem cookies de publicitat ni compartim dades amb tercers.</li>
+    </ul>
+
+    <button id="btn-acceptar-privacitat" class="btn-primari">Entendre i continuar</button>
+    <p class="nota-peu">Meteo CV: La informació de l'oratge, radar meteorològic i alertes, sempre a mà.</p>
+</div>
 </div>
 </body>
 </html>
