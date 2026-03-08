@@ -62,10 +62,16 @@ function renderizar(data, nombre, targetId, aviso) {
     if (aviso && aviso.titulo) {
         const textColor = (aviso.color === "#f3f702" || aviso.color === "yellow") ? "#222" : "#fff";
         alertaHtml = `
-            <div class="alerta-card" style="background-color: ${aviso.color}; color: ${textColor};">
-                <h4 style="margin:0;">⚠️ ${aviso.titulo}</h4>
-                <p class="alerta-desc" style="margin:8px 0; font-size:0.9rem;">${aviso.desc}</p>
-                <a href="avisos.html" target="_blank" style="color:${textColor}; font-weight:bold; font-size:0.8rem; border:1px solid ${textColor}; padding:3px 8px; border-radius:5px; text-decoration:none;">Veure mapa</a>
+            <div class="alerta-card" style="background-color: ${aviso.color}; color: ${textColor}; border-left: 5px solid rgba(0,0,0,0.2);">
+                <h4 style="margin:0; font-size:1.1rem;">⚠️ ${aviso.titulo}</h4>
+                <p class="alerta-desc" style="margin:8px 0; font-size:0.9rem; font-weight:500;">${aviso.desc}</p>
+                
+                <div class="alerta-horario" style="font-size:0.8rem; opacity:0.9; margin-bottom:10px;">
+                    <div><strong>Inici:</strong> ${aviso.inicio}</div>
+                    <div><strong>Fi:</strong> ${aviso.fin}</div>
+                </div>
+
+                <a href="avisos.html" style="color:${textColor}; font-weight:bold; font-size:0.75rem; border:1px solid ${textColor}; padding:4px 10px; border-radius:8px; text-decoration:none; display:inline-block;">VEURE MAPA D'AVISOS</a>
             </div>`;
     }
 
