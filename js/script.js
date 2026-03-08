@@ -16,7 +16,7 @@ function initTheme() {
     }
 }
 
-// 2. BUSCADOR
+// 2. BUSCADOR Y CARGA
 async function buscarTiempo(poble, targetId) {
     try {
         const geo = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(poble)}&count=1&language=ca`);
@@ -24,58 +24,32 @@ async function buscarTiempo(poble, targetId) {
         if (!geoData.results) return;
         const m = geoData.results[0];
         
-        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${m.latitude}&longitude=${m.longitude}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code,precipitation_probability,precipitation&daily=weather_code,temperature_2m_max,temperature_2m_min,uv_index_max,sunrise,sunset,precipitation_sum&timezone=auto`);
-        datosGlobales = await res.json();
-        
-        const aviso = await obtenerAvisoDesdeGeoJSON(m.latitude, m.longitude);
-        renderizar(datosGlobales, m.name, targetId, aviso);
+        // Guardamos memoria
+        localStorage.setItem("ultimPobleBuscat", m.name);
+        localStorage.setItem("ultimaLat", m.latitude);
+        localStorage.setItem("ultimaLon", m.longitude);
+
+        await cargarDirecto(m.latitude, m.longitude, m.name, targetId);
     } catch (e) { console.error(e); }
 }
 
-// --- LÓGICA DEL BUSCADOR ---
+async function cargarDirecto(lat, lon, nombre, targetId = "resultado-tiempo-home") {
+    try {
+        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code,precipitation_probability,precipitation&daily=weather_code,temperature_2m_max,temperature_2m_min,uv_index_max,sunrise,sunset,precipitation_sum&timezone=auto`);
+        datosGlobales = await res.json();
+        const aviso = await obtenerAvisoDesdeGeoJSON(lat, lon);
+        renderizar(datosGlobales, nombre, targetId, aviso);
+    } catch (e) { console.error(e); }
+}
+
 function ejecutarBusqueda() {
     const input = document.getElementById("buscador-input");
     const ciudad = input.value.trim();
-    
     if (ciudad.length > 2) {
-        // Guardamos en el historial del navegador
-        localStorage.setItem("ultimPobleBuscat", ciudad);
-        // Ejecutamos la búsqueda principal
         buscarTiempo(ciudad, "resultado-tiempo-home");
-        // Limpiamos el input y quitamos el foco
         input.blur();
     }
 }
-
-// Inicialización cuando carga la página
-document.addEventListener("DOMContentLoaded", () => {
-    initTheme();
-
-    const inputBusqueda = document.getElementById("buscador-input");
-    const btnBusqueda = document.getElementById("btn-buscar");
-
-    // 1. Escuchar el clic en la lupa
-    if (btnBusqueda) {
-        btnBusqueda.onclick = (e) => {
-            e.preventDefault();
-            ejecutarBusqueda();
-        };
-    }
-
-    // 2. Escuchar la tecla ENTER
-    if (inputBusqueda) {
-        inputBusqueda.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") {
-                e.preventDefault();
-                ejecutarBusqueda();
-            }
-        });
-    }
-
-    // 3. Cargar la última ciudad buscada o Valencia por defecto
-    const guardado = localStorage.getItem("ultimPobleBuscat") || "Valencia";
-    buscarTiempo(guardado, "resultado-tiempo-home");
-});
 
 // 3. RENDERIZAR
 function renderizar(data, nombre, targetId, aviso) {
@@ -84,21 +58,14 @@ function renderizar(data, nombre, targetId, aviso) {
     const { current, daily, hourly } = data;
     const horaActual = new Date().getHours();
 
-    // Lógica de Alerta
     let alertaHtml = "";
     if (aviso && aviso.titulo) {
         const textColor = (aviso.color === "#f3f702" || aviso.color === "yellow") ? "#222" : "#fff";
         alertaHtml = `
-            <div class="alerta-card" style="background-color: ${aviso.color}; color: ${textColor}; border-left: 5px solid rgba(0,0,0,0.2);">
-                <h4 style="margin:0; font-size:1.1rem;">⚠️ ${aviso.titulo}</h4>
-                <p class="alerta-desc" style="margin:8px 0; font-size:0.9rem; font-weight:500;">${aviso.desc}</p>
-                
-                <div class="alerta-horario" style="font-size:0.8rem; opacity:0.9; margin-bottom:10px;">
-                    <div><strong>Inici:</strong> ${aviso.inicio}</div>
-                    <div><strong>Fi:</strong> ${aviso.fin}</div>
-                </div>
-
-                <a href="avisos.html" style="color:${textColor}; font-weight:bold; font-size:0.75rem; border:1px solid ${textColor}; padding:4px 10px; border-radius:8px; text-decoration:none; display:inline-block;">VEURE MAPA D'AVISOS</a>
+            <div class="alerta-card" style="background-color: ${aviso.color}; color: ${textColor};">
+                <h4 style="margin:0;">⚠️ ${aviso.titulo}</h4>
+                <p class="alerta-desc" style="margin:8px 0; font-size:0.9rem;">${aviso.desc}</p>
+                <a href="avisos.html" target="_blank" style="color:${textColor}; font-weight:bold; font-size:0.8rem; border:1px solid ${textColor}; padding:3px 8px; border-radius:5px; text-decoration:none;">Veure mapa</a>
             </div>`;
     }
 
@@ -109,9 +76,7 @@ function renderizar(data, nombre, targetId, aviso) {
             <div class="hero-icon">${obtenerIcono(current.weather_code)}</div>
             <div class="hero-range">MÀX: ${Math.round(daily.temperature_2m_max[0])}° &nbsp;&nbsp; MÍN: ${Math.round(daily.temperature_2m_min[0])}°</div>
         </div>
-
         ${alertaHtml}
-
         <div class="column">
             <h2>Pròximes 24 hores</h2>
             <div class="scroll-x">`;
@@ -138,15 +103,15 @@ function renderizar(data, nombre, targetId, aviso) {
             <div class="detalle-card"><h3>💨 VENT</h3><div class="detalle-valor">${Math.round(current.wind_speed_10m)} <small>km/h</small></div></div>
             <div class="detalle-card"><h3>💧 HUMITAT</h3><div class="detalle-valor">${current.relative_humidity_2m}%</div></div>
             <div class="detalle-card"><h3>☔ PLUJA</h3><div class="detalle-valor">${hourly.precipitation_probability[horaActual]}%</div></div>
+            <div class="detalle-card"><h3>☀️ ÍNDEX UV</h3><div class="detalle-valor">${Math.round(daily.uv_index_max[0])}</div></div>
             <div class="detalle-card"><h3>🌅 ALBA</h3><div class="detalle-valor">${daily.sunrise[0].split("T")[1]}</div></div>
             <div class="detalle-card"><h3>🌇 OCÀS</h3><div class="detalle-valor">${daily.sunset[0].split("T")[1]}</div></div>
-            <div class="detalle-card"><h3>☀️ ÍNDEX UV</h3><div class="detalle-valor">${Math.round(daily.uv_index_max[0])}</div></div>
         </div>`;
 
     container.innerHTML = html;
 }
 
-// 4. MODAL
+// 4. MODAL Y AUXILIARES
 function abrirDetalleDia(index) {
     const modal = document.getElementById("modal-detalle");
     const overlay = document.getElementById("modal-overlay");
@@ -187,7 +152,6 @@ function obtenerIcono(code) {
     return "🌡️";
 }
 
-// FUNCIÓN DE AVISOS CORREGIDA
 async function obtenerAvisoDesdeGeoJSON(lat, lon) {
     try {
         const res = await fetch(urlGeoJSON);
@@ -213,9 +177,7 @@ async function obtenerAvisoDesdeGeoJSON(lat, lon) {
 
                 return {
                     titulo: temp.querySelector("h3") ? temp.querySelector("h3").innerText : "Avís Actiu",
-                    desc: descDetallada || "Consulta els detalls en el mapa.",
-                    inicio: fechaInicio,
-                    fin: fechaFin,
+                    desc: descDetallada || (temp.querySelector("p:nth-of-type(3)") ? temp.querySelector("p:nth-of-type(3)").innerText : "Consulta els detalls."),
                     color: props.fillColor || "#f3f702"
                 };
             }
@@ -236,8 +198,74 @@ function puntoEnPoligono(lat, lon, coords) {
     return inside;
 }
 
+function obtenerUbicacionGPS() {
+    if (!navigator.geolocation) return;
+    const input = document.getElementById("buscador-input");
+    input.placeholder = "Obtenint ubicació...";
+
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        try {
+            const resNom = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+            const dataNom = await resNom.json();
+            const nombrePueblo = dataNom.address.city || dataNom.address.town || dataNom.address.village || "La meua ubicació";
+            
+            localStorage.setItem("ultimPobleBuscat", nombrePueblo);
+            localStorage.setItem("ultimaLat", lat);
+            localStorage.setItem("ultimaLon", lon);
+            
+            await cargarDirecto(lat, lon, nombrePueblo);
+            input.placeholder = "Cerca el teu poble...";
+            input.value = "";
+        } catch (e) { console.error(e); }
+    });
+}
+
+// 5. INICIALIZACIÓN (DOM CONTENT LOADED)
 document.addEventListener("DOMContentLoaded", () => {
     initTheme();
-    const guardado = localStorage.getItem("ultimPobleBuscat") || "Valencia";
-    buscarTiempo(guardado, "resultado-tiempo-home");
+
+    // Eventos Buscador
+    const inputBusqueda = document.getElementById("buscador-input");
+    const btnBusqueda = document.getElementById("btn-buscar");
+    if (btnBusqueda) btnBusqueda.onclick = (e) => { e.preventDefault(); ejecutarBusqueda(); };
+    if (inputBusqueda) inputBusqueda.onkeypress = (e) => { if (e.key === "Enter") ejecutarBusqueda(); };
+
+    // Evento GPS
+    const btnGPS = document.getElementById("btn-gps");
+    if (btnGPS) btnGPS.onclick = () => obtenerUbicacionGPS();
+
+    // Modal Privacidad
+    const modalPriv = document.getElementById("modal-privacitat");
+    const btnPriv = document.getElementById("btn-acceptar-privacitat");
+    if (!localStorage.getItem("privadesa_v1") && modalPriv) {
+        modalPriv.style.display = "flex";
+    }
+    if (btnPriv) {
+        btnPriv.onclick = () => {
+            localStorage.setItem("privadesa_v1", "true");
+            modalPriv.style.display = "none";
+        };
+    }
+
+    // Navegación Activa
+    const navLinks = document.querySelectorAll('nav a');
+    navLinks.forEach(link => {
+        link.onclick = () => {
+            navLinks.forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+        };
+    });
+
+    // CARGA INICIAL (MEMORIA)
+    const ultimoNombre = localStorage.getItem("ultimPobleBuscat");
+    const ultimaLat = localStorage.getItem("ultimaLat");
+    const ultimaLon = localStorage.getItem("ultimaLon");
+
+    if (ultimoNombre && ultimaLat && ultimaLon) {
+        cargarDirecto(ultimaLat, ultimaLon, ultimoNombre);
+    } else {
+        buscarTiempo("Valencia", "resultado-tiempo-home");
+    }
 });
