@@ -37,27 +37,29 @@
   </main>
 
   <nav>
-    <a href="index.html" class="active">
+    <div id="nav-indicator"></div>
+    
+    <a href="index.html" class="nav-item">
       <span class="nav-icon">🏠</span>
       <span class="nav-label">Inici</span>
     </a>
-    <a href="avisos.html">
+    <a href="avisos.html" class="nav-item">
       <span class="nav-icon">⚠️</span>
       <span class="nav-label">Avisos</span>
     </a>
-    <a href="radar.html">
+    <a href="radar.html" class="nav-item">
       <span class="nav-icon">🌧️</span>
       <span class="nav-label">Radar</span>
     </a>
-    <a href="transit.html">
+    <a href="transit.html" class="nav-item">
       <span class="nav-icon">🚗</span>
       <span class="nav-label">Trànsit</span>
     </a>
-    <button id="theme-toggle">
+    <button id="theme-toggle" class="nav-item">
       <span class="nav-icon">🌓</span>
       <span class="nav-label">Mode</span>
     </button>
-  </nav>
+</nav>
 
   <div id="modal-overlay" onclick="cerrarModal()"></div>
   

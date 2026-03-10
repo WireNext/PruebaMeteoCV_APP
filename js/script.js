@@ -239,9 +239,58 @@ function obtenerUbicacionGPS() {
     });
 }
 
+function actualizarNavegacion() {
+    const indicator = document.getElementById('nav-indicator');
+    const navItems = document.querySelectorAll('.nav-item');
+    const currentPath = window.location.pathname;
+
+    // 1. Recuperamos la última posición guardada para evitar el salto desde el inicio
+    const ultimaPosicion = localStorage.getItem('nav_pos_left');
+    const ultimoAncho = localStorage.getItem('nav_pos_width');
+
+    if (ultimaPosicion && ultimoAncho) {
+        // Desactivamos la transición un momento para colocarlo donde estaba antes
+        indicator.style.transition = 'none';
+        indicator.style.left = `${ultimaPosicion}px`;
+        indicator.style.width = `${ultimoAncho}px`;
+    }
+
+    navItems.forEach(item => {
+        const href = item.getAttribute('href');
+        
+        // Detectar si este es el botón activo
+        if (href && (currentPath.endsWith(href) || (currentPath === "/" && href === "index.html"))) {
+            item.classList.add('active');
+
+            // Forzamos un pequeño delay para que la transición se vea fluida
+            setTimeout(() => {
+                indicator.style.transition = 'all 0.4s cubic-bezier(0.23, 1, 0.32, 1)';
+                indicator.style.left = `${item.offsetLeft}px`;
+                indicator.style.width = `${item.offsetWidth}px`;
+                
+                // Guardamos la nueva posición para la siguiente página
+                localStorage.setItem('nav_pos_left', item.offsetLeft);
+                localStorage.setItem('nav_pos_width', item.offsetWidth);
+            }, 50);
+        }
+
+        // Si el usuario hace clic en otro enlace, guardamos su posición actual justo antes de salir
+        if (href) {
+            item.addEventListener('click', () => {
+                const activoActual = document.querySelector('.nav-item.active');
+                if (activoActual) {
+                    localStorage.setItem('nav_pos_left', activoActual.offsetLeft);
+                    localStorage.setItem('nav_pos_width', activoActual.offsetWidth);
+                }
+            });
+        }
+    });
+}
+
 // 5. INICIALIZACIÓN (DOM CONTENT LOADED)
 document.addEventListener("DOMContentLoaded", () => {
     initTheme();
+    actualizarNavegacion();
 
     // Eventos Buscador
     const inputBusqueda = document.getElementById("buscador-input");
